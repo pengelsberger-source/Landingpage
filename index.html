@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tab 4 Service</title>
+<style>
+body { font-family: Arial; text-align: center; padding: 40px 20px; }
+h1 { font-size: 28px; }
+p { opacity: 0.8; font-size: 17px; margin-bottom: 30px; }
+.btn {
+  background: #222; 
+  color:#fff; 
+  padding:15px;
+  margin:12px 0; 
+  border-radius:10px; 
+  display:block;
+  font-size:20px; 
+  text-decoration:none; 
+  max-width:280px;
+  margin-left:auto; 
+  margin-right:auto;
+  cursor:pointer;
+}
+</style>
+
+<script>
+async function sendService(type) {
+  const urlParams = new URLSearchParams(window.location.search);
+  const table = urlParams.get("table") || "Unbekannt";
+
+  const apiUrl = `https://tap4-service-backend-pascal-engelsbergers-projects.vercel.app/api/send?table=${encodeURIComponent(table)}&type=${encodeURIComponent(type)}`;
+
+  console.log("Calling API:", apiUrl);
+
+  try {
+    const resp = await fetch(apiUrl, { method: "GET" });
+    const text = await resp.text(); // roher Text, damit wir alles sehen
+    console.log("HTTP status:", resp.status, resp.statusText);
+    console.log("Response body:", text);
+
+    let data;
+    try { data = JSON.parse(text); } catch(e) { data = null; }
+
+    if (!resp.ok) {
+      alert("Fehler beim Senden der Anfrage. Sieh in der Konsole nach (F12).");
+      console.error("API-Fehler:", resp.status, data || text);
+      return;
+    }
+
+    // Erfolg
+    alert("Die Bedienung wurde benachrichtigt!");
+    console.log("API success:", data);
+  } catch (err) {
+    // Netzwerkfehler / CORS / DNS etc.
+    alert("Netzwerkfehler beim Senden. Öffne die Konsole (F12) und schicke mir die Fehlermeldung.");
+    console.error("Fetch Exception:", err);
+  }
+}
+</script>
+
+</head>
+<body>
+
+<h1>Willkommen zu Tab 4 Service</h1>
+<p>Wählen Sie Ihren gewünschten Service und die Bedienung ist gleich bei Ihnen.</p>
+
+<a class="btn" onclick="sendService('Nachbestellen')">☕ Nachbestellen</a>
+<a class="btn" onclick="sendService('Hilfe')">💬 Hilfe</a>
+<a class="btn" onclick="sendService('Bezahlen')">💳 Bezahlen</a>
+
+</body>
+</html>
