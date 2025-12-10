@@ -25,44 +25,25 @@ p { opacity: 0.8; font-size: 17px; margin-bottom: 30px; }
 </style>
 
 <script>
-async function sendService(type) {
-  const urlParams = new URLSearchParams(window.location.search);
-  const table = urlParams.get("table") || "Unbekannt";
-
-  const apiUrl = `https://tap4-service-backend-pascal-engelsbergers-projects.vercel.app/api/send?table=${encodeURIComponent(table)}&type=${encodeURIComponent(type)}`;
-
-  console.log("Calling API:", apiUrl);
-
-  try {
-    const resp = await fetch(apiUrl, { method: "GET" });
-    const text = await resp.text(); // roher Text, damit wir alles sehen
-    console.log("HTTP status:", resp.status, resp.statusText);
-    console.log("Response body:", text);
-
-    let data;
-    try { data = JSON.parse(text); } catch(e) { data = null; }
-
-    if (!resp.ok) {
-      alert("Fehler beim Senden der Anfrage. Sieh in der Konsole nach (F12).");
-      console.error("API-Fehler:", resp.status, data || text);
-      return;
-    }
-
-    // Erfolg
-    alert("Die Bedienung wurde benachrichtigt!");
-    console.log("API success:", data);
-  } catch (err) {
-    // Netzwerkfehler / CORS / DNS etc.
-    alert("Netzwerkfehler beim Senden. Öffne die Konsole (F12) und schicke mir die Fehlermeldung.");
-    console.error("Fetch Exception:", err);
+  function sendService(type) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const table = urlParams.get("table") || "Unbekannt";
+  
+    fetch(`https://tap4-service-backend-pascal-engelsbergers-projects.vercel.app/api/send?table=${table}&type=${type}`)
+      .then(() => {
+        alert("Die Bedienung wurde benachrichtigt!");
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("Fehler beim Senden der Anfrage.");
+      });
   }
-}
-</script>
+  </script>
 
 </head>
 <body>
 
-<h1>Willkommen zu Tab 4 Service</h1>
+<h1>Willkommen zu Tap 4 Service</h1>
 <p>Wählen Sie Ihren gewünschten Service und die Bedienung ist gleich bei Ihnen.</p>
 
 <a class="btn" onclick="sendService('Nachbestellen')">☕ Nachbestellen</a>
